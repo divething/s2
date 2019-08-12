@@ -9,13 +9,34 @@ This is a temporary script file.
 
 
 #this code intends to run a batch processing list of algorithms of all the files sentinel files in the folder 
+#################################################################
+###     step 1.0     choosing the folder                  #####
+#################################################################
+
+import tkinter
+from tkinter import filedialog
+
+
+
+root = tkinter.Tk()
+root.withdraw()
+s2_path = filedialog.askdirectory(parent=root,initialdir="/home/tamir/Documents/",title='Please select a directory')
+print(s2_path)
 
 
 
 
-##########################################
-###     step 1                       #####
-##########################################
+
+
+
+
+
+
+
+
+#################################################################
+###     step 1.1     making a list of images                  #####
+#################################################################
 
 
 #	open folder
@@ -43,7 +64,7 @@ TODO for Tamir
 ***********************************
 """
 #   /media/ubu/drive/github/sentinel/input_images
-s2_path = ("/media/ubu/drive/github/sentinel/input_images")
+#               s2_path = ("/media/ubu/drive/github/sentinel/input_images")
 #	/media/ubu/drive/sentinel/input_images
 #   s2_path = ("/media/ubu/drive/sentinel/input_images")
 s2_list_zip = glob(os.path.join(s2_path, "*.zip"))
@@ -58,39 +79,52 @@ print( "The arguments are: " , str(sys.argv))
 ###########################################################
 ### unzipping
 ##############################################
-
+temp_path = (os.path.join(s2_path, "temp") )
 # importing required modules 
 from zipfile import ZipFile 
-  
+
+
+
+
+for zipping in s2_list_zip:
 # specifying the zip file name 
-file_to_zip = s2_list_zip[1]
+   # file_to_zip = s2_list_zip(zipping)
   
 # opening the zip file in READ mode 
 #   with ZipFile("/media/ubu/drive/github/sentinel/input_images/S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753.zip", 'r') as zip: 
 
-with ZipFile(file_to_zip, 'r') as zip: 
+    with ZipFile(zipping, 'r') as zip: 
     # printing all the contents of the zip file 
-    zip.printdir() 
+        zip.printdir() 
   
     # extracting all the files 
-    print('Extracting all the files now...') 
-    temp_path = (os.path.join(s2_path, "temp") )
-    zip.extractall(temp_path) 
-    print('Done!') 
+        print('Extracting all the files now...') 
+    
+        zip.extractall(temp_path) 
+        print('Done!') 
 
 
+###############################################################################
+###############################################################################
+###############################################################################
+#   processing loop should start here
 
-
-##########################################
-###     step 2                       #####
-##########################################
-
-
-
-
-
-
+# this is the database/table/matrix - it should have each of the folloing steps fill in tha columns.  
+#   the rows should be one row per image
 img_database = []
+
+
+
+
+#####################################################################
+###     step 1.2     breaking image name to make an image name, date, type, etc    #####
+#####################################################################
+
+
+
+
+
+
 
 s2_list_safe = glob(os.path.join(temp_path, "*.SAFE"))
 # Are we working with the raw "*.SAFE" compressed format?
@@ -100,6 +134,44 @@ s2_list_safe = glob(os.path.join(temp_path, "*.SAFE"))
 
 for s2_file_safe in s2_list_safe:
     s2_name = os.path.splitext(os.path.split(s2_file_safe)[1])[0]
+
+    """
+    
+    this is my attempt in filling in the table withthe data - its crap
+    
+    
+    os.path.split(s2_file_safe)[n]
+    
+    (s2_file_safe)[x]
+    givs the file with its path
+    '/home/tamir/Documents/sentinel_images_for_burn/originals/temp/S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE'
+    
+    os.path.split((s2_file_safe)[0])
+    ('/home/tamir/Documents/sentinel_images_for_burn/originals/temp',
+     'S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE')
+    splits the above into the path and the file
+    
+    
+    
+    img_database.append (os.path.split((s2_file_safe)[0]))
+    fObj = pandas.DataFrame(img_database)
+    dfObj = pandas.DataFrame(img_database, columns = ['img_path' , 'img_name'])
+    
+    
+    
+    
+    
+    
+    
+    
+    """
+
+
+
+
+
+
+
     """
     ***********************************
     TODO for Tamir:
@@ -111,37 +183,49 @@ for s2_file_safe in s2_list_safe:
         
     ***********************************
     """
+    
+
 #	break file names into details: date, sensor, product etc etc
-    s2_file_components = "_".split(s2_name)
+    #   s2_file_components = "_".split(s2_name)
     # Now we have:
     # s2_file_components[0] is the mission
     s2_file_components = s2_name.split("_")
 
 #################################################################
-    #   extracting details from the file name
+    #   extracting details from the file name - im expecting each to be a column in the database
 #   option 1
 #   another way to split a string of regular order
 #   S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753
-    mission = s2_name[0:3]
-    type = s2_name[4:7]
-    level = s2_name[7:9]
-    yyyy = s2_name[11:15]
-    mm = s2_name[15:17]
-    dd = s2_name[17:19]
-    hh = s2_name[20:22]
-    min = s2_name[22:23]
-
+    '''
+        #   an unsessery step but nice to know i can do that
+        mission = s2_name[0:3]
+        type = s2_name[4:7]
+        level = s2_name[7:9]
+        yyyy = s2_name[11:15]
+        mm = s2_name[15:17]
+        dd = s2_name[17:19]
+        hh = s2_name[20:22]
+        min = s2_name[22:23]
+        # s2_file_components[1] is the level
+            # s2_file_components[2] is the acquisition date string
+            # s2_file_components[3] is the processing number
+            # s2_file_components[4] is the orbit number
+            # s2_file_components[5] is the tile number
+    '''
 
 
 #   making a table of all these detils 
     #database.append([s2_name[0:3]])
-    img_database.append(s2_file_components)
     
-    # s2_file_components[1] is the level
-    # s2_file_components[2] is the acquisition date string
-    # s2_file_components[3] is the processing number
-    # s2_file_components[4] is the orbit number
-    # s2_file_components[5] is the tile number
+    s2_file_components.append(s2_name)
+    s2_file_components.append(s2_name[4:7])
+    s2_file_components.append(s2_name[7:10])
+    #s2_file_components.append(s2_name[9:11])
+    s2_file_components.append(s2_name[11:15])
+    s2_file_components.append(s2_name[15:17])
+    s2_file_components.append(s2_name[17:19])
+    s2_file_components.append(s2_name[20:22])
+    s2_file_components.append(s2_name[22:23])
 
 
 
@@ -174,24 +258,40 @@ for s2_file_safe in s2_list_safe:
     IN[21]: datetime.datetime.strptime("20190506T081609", "%Y%m%dT%H%M%S")
     Out[21]: datetime.datetime(2019, 5, 6, 8, 16, 9)
     
-  
+      
     ***********************************
     """
-import time
-import datetime
-inputime = s2_name[11:25]
-datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S")
+    import time
+    import datetime
+    inputime = s2_name[11:25]
+    datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S")
+    
+    s2_file_components.append(datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S"))
 
 
 
 
 
+########################################################################
+########################################################################
+#
+#    import pandas
+##   fObj = pandas.DataFrame(img_database)
+#    image_table = pandas.DataFrame(s2_file_components, columns = ['mission' , 'type & level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','file_name','type','level','yyyy'  , 'mm','dd','hh','min','time'])
+#    pandas.DataFrame(s2_file_components, columns = ['mission' , 'type & level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','file_name','type','level','yyyy'  , 'mm','dd','hh','min','time'])
+#
 
-##########################################
-###     step 3                       #####
-##########################################
+
+
+
+########################################################
+###     step 3  opening a file                     #####
+########################################################
 
 '''
+
+examples that didn't work for me for various reasons
+=======================================================
 here are some code in gdasl that work:
 step 1 export an image directly from a zip (how it comes out from sentinel hub) to layers in tif format in 3 batches - 10m resolution and than 20 and 60
     gdal_translate SENTINEL2_L2A:/vsizip/S2B_MSIL2A_20190225T081919_N0211_R121_T36RXV_20190225T125206.zip/S2B_MSIL2A_20190225T081919_N0211_R121_T36RXV_20190225T125206.SAFE/MTD_MSIL2A.xml:10m:EPSG_32636 10m.tif -co TILED=YES --config GDAL_CACHEMAX 1000 --config GDAL_NUM_THREADS 2
@@ -235,7 +335,7 @@ band2 = rasterio.open(imagePath+'T11SKB_20180825T183909_B02.jp2', driver='JP2Ope
 
 
 
-
+'''
 
 
 
@@ -264,7 +364,7 @@ plt.show()
 
 
 
-
+'''
 
 
 
