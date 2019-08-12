@@ -1,0 +1,58 @@
+github commands
+
+https://rogerdudler.github.io/git-guide/
+
+
+#	initial stuff
+git init
+touch sentinel.txt
+git status
+
+
+
+#	before starting work
+git pul
+
+
+
+
+#	after finishing work
+git add 
+git commit
+git push
+
+
+
+
+
+#	other commands
+git rm XXXXX
+git commit -m "Remmove XXXX"
+git push
+
+
+
+
+
+
+
+
+
+
+
+#	other stuff
+git add sentinel.txt
+git commit
+git config --global user.email divething@yahoo.com
+git config --global user.name divething
+git commit -m "first try"
+git status
+git push
+git remote add origin https://github.com/divething/sentinel.git
+
+
+1025  git remote add origin https://github.com/divething/sentinel.git
+
+
+
+
