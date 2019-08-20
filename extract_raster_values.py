@@ -14,6 +14,14 @@ Date:       19/08/2019
 Revisions:
 """
 
+"""
+The commented lines below  (beginning with '#%'are for the GRASS parser.
+This is how command line arguments are defined for python scripts in GRASS.
+Three CLI arguments are defined: input, tiff_dir and output_csv
+All are required.
+The command on line 133 reads the arguments using g.parser
+and fills two string arrays: 'options' and 'flags'
+"""
 #%module
 #% description: Extract raster values of many images at point locations
 #%end
@@ -26,6 +34,7 @@ Revisions:
 
 #%option
 #% key: tiff_dir
+#% type: string
 #% description: Directory containing Geotiff files
 #% required: no
 #%end
@@ -40,16 +49,16 @@ Revisions:
 import os
 import sys
 from glob import glob
-import grass.script as gscript
 from datetime import datetime as DT
+try:
+    import grass.script as gscript
+except ImportError:
+    print("""You must be in a running GRASS GIS session.
+          Exiting...""")
+    sys.exit(1)
 
 
 def main():
-    if "GISBASE" not in os.environ:
-        gscript.message("""You must be in GRASS GIS to run this program.
-                        Exiting...""")
-        sys.exit(1)
-
     # Starting
     t0 = DT.now()
     print("\n   %s - Beginning process" % t0)
@@ -59,16 +68,24 @@ def main():
     tiff_dir = options['tiff_dir']
     output_csv = options['output_csv']
     vect_name = os.path.splitext(os.path.split(input_vect)[1])[0]
+
     # Make sure no invalid characters in file name
     vect_name = vect_name.replace(" ", "").replace(".", "_")
     gscript.run_command('v.import',
-                        input_=options['input'],
+                        input_=input_vect,
                         output=vect_name, overwrite=True)
 
     # Assume Geotiffs are named with tif extension (lowercase)
-    i = 0
-    for t in glob(tiff_dir + "*.tif"):
+    tiff_list = glob(os.path.join(tiff_dir, "*.tif"))
+    for i in range(len(tiff_list)):
         # Import one tiff
+        t = tiff_list[i]
+        """
+        ==================================================================
+        TC: Exercise 1
+        Can you explain the indices [1] and [0] below?
+        ==================================================================
+        """
         rast_name = os.path.splitext(os.path.split(t)[1])[0]
         # Make sure no invalid characters in file name
         rast_name = rast_name.replace(" ", "").replace(".", "_")
@@ -78,9 +95,18 @@ def main():
         # Always set the region
         gscript.run_command('g.region',
                             rast=rast_name, flags="a")
+
         # Extract value for all points in vector
-        col_name = "tiff_" + str(i)
-        i += 1
+        """
+        ==================================================================
+        TC: Exercise 2
+        The col_name variable below is simply a string with
+        the incremented index 'i', formatted with two leading zeros.
+        Change the code to make the col_name variable below
+        as a substring of the tiff filename
+        ==================================================================
+        """
+        col_name = "tiff_" + str(i).zfill(2)
         gscript.run_command('v.what.rast',
                             map_=vect_name, raster=rast_name, column=col_name)
         # Remove the raster
@@ -90,7 +116,13 @@ def main():
     # Loop complete, now export vector attrib table to CSV
     gscript.run_command('v.out.ogr',
                         input_=vect_name, output=output_csv, format="CSV")
-
+    """
+    ==================================================================
+    TC: Exercise 3
+    Change the line above to use the v.out.ascii grass command
+    What are the differences?  (Use the "c" flag to v.out.ascii)
+    ==================================================================
+    """
     # Starting
     t1 = DT.now()
     ttl_secs = (t1 - t0).seconds
