@@ -15,6 +15,15 @@ This is a temporary script file.
 
 import tkinter
 from tkinter import filedialog
+from glob import glob
+import os    # All the operating system commands to break up paths and file names
+import sys	
+import time
+import datetime
+from zipfile import ZipFile 
+import pandas
+
+
 
 
 
@@ -22,16 +31,6 @@ root = tkinter.Tk()
 root.withdraw()
 s2_path = filedialog.askdirectory(parent=root,initialdir="/home/tamir/Documents/",title='Please select a directory')
 print(s2_path)
-
-
-
-
-
-
-
-
-
-
 
 
 #################################################################
@@ -87,11 +86,11 @@ from zipfile import ZipFile
 
 
 for zipping in s2_list_zip:
-# specifying the zip file name 
-   # file_to_zip = s2_list_zip(zipping)
+    # specifying the zip file name 
+    # file_to_zip = s2_list_zip(zipping)
   
-# opening the zip file in READ mode 
-#   with ZipFile("/media/ubu/drive/github/sentinel/input_images/S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753.zip", 'r') as zip: 
+    # opening the zip file in READ mode 
+    #   with ZipFile("/media/ubu/drive/github/sentinel/input_images/S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753.zip", 'r') as zip: 
 
     with ZipFile(zipping, 'r') as zip: 
     # printing all the contents of the zip file 
@@ -120,12 +119,6 @@ img_database = []
 ###     step 1.2     breaking image name to make an image name, date, type, etc    #####
 #####################################################################
 
-
-
-
-
-
-
 s2_list_safe = glob(os.path.join(temp_path, "*.SAFE"))
 # Are we working with the raw "*.SAFE" compressed format?
 # or extracted *.tif ??
@@ -133,44 +126,19 @@ s2_list_safe = glob(os.path.join(temp_path, "*.SAFE"))
 #	make and input the list of files in folder in list 
 
 for s2_file_safe in s2_list_safe:
-    s2_name = os.path.splitext(os.path.split(s2_file_safe)[1])[0]
-
-    """
+    '''
+    s2_path = (os.path.splitext(os.path.split(s2_file_safe)[0])[0])
+    s2_name = (os.path.splitext(os.path.split(s2_file_safe)[1])[0])
+    s2_name_format = (os.path.splitext(os.path.split(s2_file_safe)[1])[1])
+    s2_name_full = (os.path.splitext(os.path.split(s2_file_safe)[1])[1])
+'''    
+    print (s2_list_safe)
     
-    this is my attempt in filling in the table withthe data - its crap
-    
-    
-    os.path.split(s2_file_safe)[n]
-    
-    (s2_file_safe)[x]
-    givs the file with its path
-    '/home/tamir/Documents/sentinel_images_for_burn/originals/temp/S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE'
-    
-    os.path.split((s2_file_safe)[0])
-    ('/home/tamir/Documents/sentinel_images_for_burn/originals/temp',
-     'S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE')
-    splits the above into the path and the file
-    
-    
-    
-    img_database.append (os.path.split((s2_file_safe)[0]))
-    fObj = pandas.DataFrame(img_database)
-    dfObj = pandas.DataFrame(img_database, columns = ['img_path' , 'img_name'])
-    
-    
-    
-    
-    
-    
-    
-    
-    """
-
-
-
-
-
-
+    s2_file_components=[]
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[0])[0])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[1])[0])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[0])[1])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[1])[1])
 
     """
     ***********************************
@@ -189,8 +157,8 @@ for s2_file_safe in s2_list_safe:
     #   s2_file_components = "_".split(s2_name)
     # Now we have:
     # s2_file_components[0] is the mission
-    s2_file_components = s2_name.split("_")
-
+    namesplit = (s2_name.split("_"))
+    s2_file_components = ((s2_file_components + namesplit))
 #################################################################
     #   extracting details from the file name - im expecting each to be a column in the database
 #   option 1
@@ -228,12 +196,9 @@ for s2_file_safe in s2_list_safe:
     s2_file_components.append(s2_name[22:23])
 
 
-
-
-
-
 #############################################################
-    #   extracting the date components from the date and time string
+#   extracting the date components from the date and time string
+#############################################################
     """
     ***********************************
     TODO for Tamir:
@@ -269,16 +234,35 @@ for s2_file_safe in s2_list_safe:
     s2_file_components.append(datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S"))
 
 
-
-
-
 ########################################################################
+###     sorting out all the data in one table.
 ########################################################################
+    '''
+    
+    this is my attempt in filling in the table withthe data - its crap
+    
+    
+    os.path.split(s2_file_safe)[n]
+    
+    (s2_file_safe)[x]
+    givs the file with its path
+    '/home/tamir/Documents/sentinel_images_for_burn/originals/temp/S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE'
+    
+    os.path.split((s2_file_safe)[0])
+    ('/home/tamir/Documents/sentinel_images_for_burn/originals/temp',
+     'S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE')
+    splits the above into the path and the file
+    
+    
+    '''    
+#    img_database.append (os.path.split((s2_file_safe)[0]))
+#    fObj = pandas.DataFrame(img_database)
+#    dfObj = pandas.DataFrame(img_database, columns = ['img_path' , 'img_name'])
+#    
 #
 #    import pandas
 ##   fObj = pandas.DataFrame(img_database)
-#    image_table = pandas.DataFrame(s2_file_components, columns = ['mission' , 'type & level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','file_name','type','level','yyyy'  , 'mm','dd','hh','min','time'])
-#    pandas.DataFrame(s2_file_components, columns = ['mission' , 'type & level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','file_name','type','level','yyyy'  , 'mm','dd','hh','min','time'])
+    image_table = pandas.DataFrame([s2_file_components], columns = ['path', 'file', 'something', 'format','mission' , 'type & level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','file_name','type','level','yyyy'  , 'mm','dd','hh','min','time'])
 #
 
 
