@@ -6,13 +6,17 @@ Use the CRS of one of the rasters to create the new Location and start grass in 
 Create a new Location using this command:
 ```bash
 grass -c /home/micha/GIS/Europe/Corine_Land_Cover/2012/g100_clc12_V18_5.tif /home/micha/grassdata/LAEA_EU/
+# grass = command to initialize GRASS environment
+# -c = create new Location
+# CRS is taken from the Geotiff file 
+# Last is the location for your new GRASSDBASE and LOCATION
 ```
 You are now in a GRASS session. Check the projection info and current mapset:
 ```bash
 g.proj -p
 g.mapset -p
 ```
-Now create a new work mapset called 'Europe' and check again:
+Now create a new working mapset called 'Europe' and check again:
 ```bash
 # Create new mapset
 g.mapset -c Europe
