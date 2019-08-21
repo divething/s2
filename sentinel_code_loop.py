@@ -22,7 +22,7 @@ import time
 import datetime
 from zipfile import ZipFile 
 import pandas
-
+from osgeo import gdal
 
 
 
@@ -126,11 +126,11 @@ s2_list_safe = glob(os.path.join(temp_path, "*.SAFE"))
 
 #	make and input the list of files in folder in list 
 number_of_images = len (s2_list_safe)
-col_label = ["index",'path', 'file', 'something', 'format','mission' , 'type_&_level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','image_type','processing_level','yyyy', 'mm','dd','hh','min','time']
-image_table = pandas.DataFrame()
+col_label = ["index","processed","complet",'path', 'file', 'format','mission' , 'type_&_level', 'time_capture', 'tile_n', 'tile_r', 'tile_utm', 'time_prcessing','image_type','processing_level','yyyy', 'mm','dd','hh','min','time']
+image_table = pandas.DataFrame(columns=col_label, index=range(number_of_images))
 test = pandas.DataFrame(columns=col_label, index=range(number_of_images))
 test1 = []
-for count in range(1, 2):
+for i in range(number_of_images):
     '''
     s2_path = (os.path.splitext(os.path.split(s2_file_safe)[0])[0])
     s2_name = (os.path.splitext(os.path.split(s2_file_safe)[1])[0])
@@ -138,13 +138,16 @@ for count in range(1, 2):
     s2_name_full = (os.path.splitext(os.path.split(s2_file_safe)[1])[1])
 '''    
     print (s2_list_safe)
-    print (count)
+    print (i)
+    
     s2_file_components=[]
-    s2_file_components.append(s2_file_safe)
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[0])[0])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[1])[0])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[0])[1])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[1])[1])
+    s2_file_components.append(i)
+    s2_file_components.append(i+1)
+    s2_file_components.append(s2_list_safe[i])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[2])[0])[0])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[2])[1])[0])
+#    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[2])[0])[1])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[2])[1])[1])
 
     """
     ***********************************
@@ -163,7 +166,7 @@ for count in range(1, 2):
     #   s2_file_components = "_".split(s2_name)
     # Now we have:
     # s2_file_components[0] is the mission
-    namesplit = (s2_file_components[2].split("_"))
+    namesplit = (s2_file_components[4].split("_"))
     s2_file_components = ((s2_file_components + namesplit))
 #################################################################
     #   extracting details from the file name - im expecting each to be a column in the database
@@ -193,14 +196,14 @@ for count in range(1, 2):
     
 #    s2_file_components.append(s2_file_components[1])
 #    s2_file_components.append((s2_file_components))
-    s2_file_components.append((s2_file_components[2])[4:7])
-    s2_file_components.append((s2_file_components[2])[7:10])
+    s2_file_components.append((s2_file_components[4])[4:7])
+    s2_file_components.append((s2_file_components[4])[7:10])
     #s2_file_components.append(s2_name[9:11])
-    s2_file_components.append((s2_file_components[2])[11:15])
-    s2_file_components.append((s2_file_components[2])[15:17])
-    s2_file_components.append((s2_file_components[2])[17:19])
-    s2_file_components.append((s2_file_components[2])[20:22])
-    s2_file_components.append((s2_file_components[2])[22:23])
+    s2_file_components.append((s2_file_components[4])[11:15])
+    s2_file_components.append((s2_file_components[4])[15:17])
+    s2_file_components.append((s2_file_components[4])[17:19])
+    s2_file_components.append((s2_file_components[4])[20:22])
+    s2_file_components.append((s2_file_components[4])[22:23])
 
 
 #############################################################
@@ -235,7 +238,7 @@ for count in range(1, 2):
     """
     import time
     import datetime
-    inputime = (s2_file_components[2])[11:25]
+    inputime = (s2_file_components[4])[11:25]
     datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S")
     
     s2_file_components.append(datetime.datetime.strptime(inputime, "%Y%m%dT%H%M%S"))
@@ -270,20 +273,41 @@ for count in range(1, 2):
 #    import pandas
 ##   fObj = pandas.DataFrame(img_database)
     
-    
-    image_table = pandas.DataFrame([s2_file_components], columns =  col_label)
-    test = pandas.DataFrame([s2_file_components], index = [count], columns =  col_label)
+    image_table.loc[i,:] = s2_file_components.copy()
+
+    test.loc[i,:] = s2_file_components
+
+#    image_table = pandas.DataFrame([s2_file_components], columns =  col_label)
+#    test = pandas.DataFrame([s2_file_components], index = [i], columns =  col_label)
 #    test1.append(s2_file_components, ignore_index=True)
 #    test.loc[count].s2_file_components
-    del s2_file_components
+#    del s2_file_components
 #
+    img_4rom_list = gdal.Open(s2_file_components[2], gdal.GA_ReadOnly)
+    img_4rom_list.GetRasterBand(1)
 
 
 
+/media/ubu/drive/sentinel/input_images/temp/S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753.SAFE/GRANULE/L2A_T36RXV_A011301_20190506T082328/IMG_DATA/R10m/T36RXV_20190506T081609_B02_10m.jp2
+/media/ubu/drive/sentinel/input_images/temp/S2B_MSIL2A_20190506T081609_N0212_R121_T36RXV_20190506T113753.SAFE
+b2_path
 
 ########################################################
 ###     step 3  opening a file                     #####
 ########################################################
+import sys
+from osgeo import gdal
+#   cd s2_save_path
+for l in range(number_of_images):#  here we start the second loop that creates processs the images
+    img = gdal.Open(image_table.loc[l,3], gdal.GA_ReadOnly)
+
+
+
+
+
+
+
+
 
 '''
 
