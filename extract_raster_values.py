@@ -77,19 +77,29 @@ def main():
 
     # Assume Geotiffs are named with tif extension (lowercase)
     tiff_list = glob(os.path.join(tiff_dir, "*.tif"))
-    for i in range(len(tiff_list)):
+    for i in range(len(tiff_list)):#    ahhhha thats how you set up a loop - i is the countyer and i guess len is the firet dimention of tiff_list
         # Import one tiff
         t = tiff_list[i]
         """
         ==================================================================
         TC: Exercise 1
         Can you explain the indices [1] and [0] below?
+        >>>>>>>>>>>>>
+        hey i already answered that in the previous code (and implimented it as a show off.....)
+        t is the file with its path and everthing....  
+         '/home/tamir/Documents/sentinel_images_for_burn/originals/temp/S2A_MSIL2A_20180416T081601_N0207_R121_T36RXV_20180416T103632.SAFE
+         split breaks it into path and file.  so [1] relates o the secon place which is the name of the file
+        os.path.split(t)[1] = is the name of the file but with the format suffix
+        os.path.splitext(os.path.split(t)[1])[0] = is the same but without the suffix (the zero tells the splitext to keep the first component....)
+        
+             
+        
         ==================================================================
         """
         rast_name = os.path.splitext(os.path.split(t)[1])[0]
         # Make sure no invalid characters in file name
-        rast_name = rast_name.replace(" ", "").replace(".", "_")
-        rast_name.replace("-", "_")
+        rast_name = rast_name.replace(" ", "").replace(".", "_")    #   replace space with no space and replace . with _
+        rast_name.replace("-", "_") #   replace - with _
         gscript.run_command('r.import',
                             input_=t, output=rast_name, overwrite=True)
         # Always set the region
@@ -102,6 +112,17 @@ def main():
         TC: Exercise 2
         The col_name variable below is simply a string with
         the incremented index 'i', formatted with two leading zeros.
+        
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        
+        # one....  two digits all tofether - eg 
+        i = 1
+        col_name = "tiff_" + str(i).zfill(2)
+        
+        Out[21]: 'tiff_01'
+        >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        
+        
         Change the code to make the col_name variable below
         as a substring of the tiff filename
         ==================================================================
@@ -121,6 +142,23 @@ def main():
     TC: Exercise 3
     Change the line above to use the v.out.ascii grass command
     What are the differences?  (Use the "c" flag to v.out.ascii)
+    >>>>>>>>>>>>>
+    so the site said - Convert a GRASS binary vector map to a GRASS ASCII vector map 
+    i guss that what it means is that you get an output (vector file) that is grass ready.
+    i don't remember if i ever used an ascii file specifically....  
+    not sure how and where to drop in the flag but it should look like this (i added the option type to specify point output but im not sure its nessesary).  
+    gscript.run_command('v.out.ascii',
+                        input_=vect_name, -c , format="point", columns="*")
+    
+    or just this?
+    gscript.run_command('v.out.ascii',
+                        input_=vect_name, -c , format="standard")
+    
+    i couldnt find anywhere a written example using this flag...
+    (http://wgbis.ces.iisc.ernet.in/grass/grass71/manuals/v.out.ascii.html)
+    
+    i will be happy for a 2min reminder on how to apply syntex like that....  
+    
     ==================================================================
     """
     # Starting
