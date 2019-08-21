@@ -130,7 +130,7 @@ col_label = ["index",'path', 'file', 'something', 'format','mission' , 'type_&_l
 image_table = pandas.DataFrame()
 test = pandas.DataFrame(columns=col_label, index=range(number_of_images))
 test1 = []
-for s2_file_safe in s2_list_safe:
+for count in range(1, 2):
     '''
     s2_path = (os.path.splitext(os.path.split(s2_file_safe)[0])[0])
     s2_name = (os.path.splitext(os.path.split(s2_file_safe)[1])[0])
@@ -138,13 +138,13 @@ for s2_file_safe in s2_list_safe:
     s2_name_full = (os.path.splitext(os.path.split(s2_file_safe)[1])[1])
 '''    
     print (s2_list_safe)
-    
+    print (count)
     s2_file_components=[]
     s2_file_components.append(s2_file_safe)
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[0])[0])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[1])[0])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[0])[1])
-    s2_file_components.append(os.path.splitext(os.path.split(s2_file_safe)[1])[1])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[0])[0])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[1])[0])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[0])[1])
+    s2_file_components.append(os.path.splitext(os.path.split(s2_file_components[0])[1])[1])
 
     """
     ***********************************
@@ -163,7 +163,7 @@ for s2_file_safe in s2_list_safe:
     #   s2_file_components = "_".split(s2_name)
     # Now we have:
     # s2_file_components[0] is the mission
-    namesplit = (s2_file_components[1].split("_"))
+    namesplit = (s2_file_components[2].split("_"))
     s2_file_components = ((s2_file_components + namesplit))
 #################################################################
     #   extracting details from the file name - im expecting each to be a column in the database
@@ -192,7 +192,7 @@ for s2_file_safe in s2_list_safe:
     #database.append([s2_name[0:3]])
     
 #    s2_file_components.append(s2_file_components[1])
-    s2_file_components.append((s2_file_components))
+#    s2_file_components.append((s2_file_components))
     s2_file_components.append((s2_file_components[2])[4:7])
     s2_file_components.append((s2_file_components[2])[7:10])
     #s2_file_components.append(s2_name[9:11])
@@ -272,9 +272,9 @@ for s2_file_safe in s2_list_safe:
     
     
     image_table = pandas.DataFrame([s2_file_components], columns =  col_label)
-    test = pandas.DataFrame([s2_file_components], columns =  col_label)
-    test1 = test1.append([s2_file_components], ignore_index=True)
-    test.loc[a].c1 = 4
+    test = pandas.DataFrame([s2_file_components], index = [count], columns =  col_label)
+#    test1.append(s2_file_components, ignore_index=True)
+#    test.loc[count].s2_file_components
     del s2_file_components
 #
 
