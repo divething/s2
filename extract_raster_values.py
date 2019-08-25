@@ -141,6 +141,14 @@ def main():
             and use that to set the col_name variable
 
         """
+        
+#        namesplit = (s2_file_components[4].split("_"))
+#        s2_file_components = ((s2_file_components + namesplit))
+           
+        
+        
+        
+        
         col_name = "tiff_" + str(i).zfill(2)
         gscript.run_command('v.what.rast',
                             map_=vect_name, raster=rast_name, column=col_name)
