@@ -108,15 +108,21 @@ def main():
 	# =============================================================================
 	#        col_name = "tiff_" + str(i).zfill(2)   
     
+        # MS: Check comments below
         tiff_filename_components=[]
         tiff_filename_components.append(i)
         tiff_filename_components.append(i+1)  # What is this for?
         tiff_filename_components.append(tiff_list[i])  # You already have the variable: t = tiff_list[i]
-	# You already have the variable rast_name which is the original tiff name without path and without extent
-	# Can't you suffice with: components = rast_name.split("_") ??
-	# Then create the col_name from whichever components you need:
-	# i.e. col_name = "_".join([components[0], components[2]) 
-        # will give you "S2A_20190131T082201" as column name
+        """
+        ==============================================================================
+	You already have the variable rast_name which is the original tiff name 
+        without path and without extent
+	Can't you suffice with: components = rast_name.split("_") ??
+	Then create the col_name from whichever components you need:
+	i.e. col_name = "_".join([components[0], components[2]) 
+        will give you "S2A_20190131T082201" as column name
+        ==============================================================================
+        """
 
         tiff_filename_components.append(i+1)
         tiff_filename_components.append(tiff_list[i])
