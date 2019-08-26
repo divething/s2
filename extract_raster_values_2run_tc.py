@@ -108,16 +108,47 @@ def main():
 	# =============================================================================
 	#        col_name = "tiff_" + str(i).zfill(2)   
     
-        
-        components = rast_name.split("_")
-        
-        
+        # MS: Check comments below
+        tiff_filename_components=[]
+        tiff_filename_components.append(i)
+        tiff_filename_components.append(i+1)  # What is this for?
+        tiff_filename_components.append(tiff_list[i])  # You already have the variable: t = tiff_list[i]
+        """
+        ==============================================================================
+	You already have the variable rast_name which is the original tiff name 
+        without path and without extent
+	Can't you suffice with: components = rast_name.split("_") ??
+	Then create the col_name from whichever components you need:
+	i.e. col_name = "_".join([components[0], components[2]) 
+        will give you "S2A_20190131T082201" as column name
+        ==============================================================================
+        """
+
+        tiff_filename_components.append(i+1)
+        tiff_filename_components.append(tiff_list[i])
+        tiff_filename_components.append(os.path.splitext(os.path.split(tiff_filename_components[2])[0])[0])
+        tiff_filename_components.append(os.path.splitext(os.path.split(tiff_filename_components[2])[1])[0])
+        tiff_filename_components.append(os.path.splitext(os.path.split(tiff_filename_components[2])[1])[1])
+        tiff_filename_components.append(os.path.basename((tiff_filename_components[3])))
+
+        tiff_filename_components.append((tiff_filename_components[4])[4:7])
+        tiff_filename_components.append((tiff_filename_components[4])[4:7])
+        tiff_filename_components.append((tiff_filename_components[4])[7:10])
+        tiff_filename_components.append((tiff_filename_components[4])[11:15])
+        tiff_filename_components.append((tiff_filename_components[4])[15:17])
+        tiff_filename_components.append((tiff_filename_components[4])[17:19])
+        tiff_filename_components.append((tiff_filename_components[4])[20:22])
+        tiff_filename_components.append((tiff_filename_components[4])[22:23])
+    
+        namesplit = (tiff_filename_components[4].split("_"))
+        tiff_filename_components = ((tiff_filename_components + namesplit))
         
 # =============================================================================
 #   make the column name
 # =============================================================================
-        col = (components[0], (components[2][2:8]))
-        col_name = "_".join(col)        
+ 
+        col_name = tiff_filename_components[6] +"_"+tiff_filename_components[10]+tiff_filename_components[11]+tiff_filename_components[12]+ "_"+str(i).zfill(3)
+        
 # =============================================================================
 #   here is the important stuff
 # =============================================================================

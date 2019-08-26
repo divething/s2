@@ -68,15 +68,26 @@ for i in range(len(tiff_list)):
 #   gdal component
 # =============================================================================
 
-    ds = gdal.Open(t)
-    ds = gdal.Translate('new.tif', ds, projWin = [xmax, ymax, xmin, ymin])
+    ds1 = gdal.Open(t)
+    ds2 = gdal.Translate('new.tif', ds, projWin = [xmax, ymax, xmin, ymin])
+    dt = gdal.Warp(tiff_list[i], ds1, format=Gtiff, outputBounds=[xmax, ymax, xmin, ymin])
     ds = None
 
+'''
+
+    # Create raster
+    OutTileName = str(Count)+'.SomeTileName.tif'
+    OutTile = gdal.Warp(OutTileName, Raster, format=RasterFormat, outputBounds=[minX, minY, maxX, maxY], xRes=PixelRes, yRes=PixelRes, dstSRS=Projection, resampleAlg=gdal.GRA_NearestNeighbour, options=['COMPRESS=DEFLATE'])
+    OutTile = None # Close dataset
+
+# Close datasets
+Raster = None
+VectorDataset.Destroy()
+print("Done.")
 
 
 
-
-
+'''
 
 
 
